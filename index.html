@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productivity & Savings Suite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header for Mobile/Tablet -->
+  <header class="mobile-header">
+    <div class="brand">
+      <i class="fa-solid fa-layer-group"></i> Productivity
+    </div>
+    <button class="mobile-toggle" id="menu-toggle" aria-label="Toggle menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </header>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <div class="brand desktop-only">
+      <i class="fa-solid fa-layer-group"></i> Productivity
+    </div>
+    <button class="nav-btn active" onclick="switchPage('stopwatch')">
+      <i class="fa-solid fa-stopwatch"></i> Stopwatch & Timer
+    </button>
+    <button class="nav-btn" onclick="switchPage('tasks')">
+      <i class="fa-solid fa-list-check"></i> To-Do Tasks
+    </button>
+    <button class="nav-btn" onclick="switchPage('notes')">
+      <i class="fa-solid fa-note-sticky"></i> Notes
+    </button>
+    <button class="nav-btn" onclick="switchPage('money')">
+      <i class="fa-solid fa-wallet"></i> Money & Savings
+    </button>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+
+    <!-- PAGE 1: STOPWATCH & TIMER -->
+    <div id="page-stopwatch" class="page active">
+      <div class="page-title">Stopwatch & Timer</div>
+      <div class="page-subtitle">Track your time and splits accurately</div>
+
+      <div class="card sw-display-card">
+        <div class="sw-sub-time" id="sw-split-time">0:00:00.000</div>
+        <div class="sw-time" id="sw-main-time">0:00:00.000</div>
+
+        <div class="sw-controls">
+          <button class="btn btn-primary" id="sw-start-btn" onclick="toggleStopwatch()">
+            <i class="fa-solid fa-play"></i> START
+          </button>
+          <button class="btn btn-danger" id="sw-split-btn" onclick="recordSplit()" disabled>
+            <i class="fa-solid fa-flag"></i> SPLIT
+          </button>
+          <button class="btn btn-danger" onclick="resetStopwatch()">
+            <i class="fa-solid fa-rotate-left"></i> RESET
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom: 12px; font-size: 16px;">Splits / Laps</h3>
+        <ul class="laps-list" id="sw-laps"></ul>
+      </div>
+    </div>
+
+    <!-- PAGE 2: TO-DO TASKS -->
+    <div id="page-tasks" class="page">
+      <div class="page-title">To-Do Tasks</div>
+      <div class="page-subtitle">Manage your daily checklist</div>
+
+      <div class="card">
+        <div class="task-input-row">
+          <input type="text" id="task-input" placeholder="Add a new task..." onkeypress="if(event.key==='Enter') addTask()">
+          <button class="btn btn-primary" onclick="addTask()"><i class="fa-solid fa-plus"></i> Add</button>
+        </div>
+        <div id="tasks-container"></div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: NOTES -->
+    <div id="page-notes" class="page">
+      <div class="page-title">Notes</div>
+      <div class="page-subtitle">Save quick notes and reminders</div>
+
+      <div class="card">
+        <div class="form-group">
+          <label>Note Title</label>
+          <input type="text" id="note-title" placeholder="Enter title...">
+        </div>
+        <div class="form-group">
+          <label>Note Content</label>
+          <textarea id="note-content" rows="3" placeholder="Type details here..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="addNote()"><i class="fa-solid fa-floppy-disk"></i> Save Note</button>
+      </div>
+
+      <div class="notes-grid" id="notes-container"></div>
+    </div>
+
+    <!-- PAGE 4: MONEY & SAVINGS -->
+    <div id="page-money" class="page">
+      <div class="page-title">Money & Savings Tracker</div>
+      <div class="page-subtitle">Track income, expenses, and savings goals in Sri Lankan Rupees (Rs.)</div>
+
+      <!-- Financial Summary Cards -->
+      <div class="money-stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Balance</div>
+          <div class="stat-value" id="stat-balance">Rs. 0.00</div>
+        </div>
+        <div class="stat-card income">
+          <div class="stat-label">Total Income</div>
+          <div class="stat-value" id="stat-income" style="color: var(--accent-green);">Rs. 0.00</div>
+        </div>
+        <div class="stat-card expense">
+          <div class="stat-label">Total Expenses</div>
+          <div class="stat-value" id="stat-expenses" style="color: var(--accent-red);">Rs. 0.00</div>
+        </div>
+        <div class="stat-card saved">
+          <div class="stat-label">Total Saved in Goals</div>
+          <div class="stat-value" id="stat-saved" style="color: var(--accent-purple);">Rs. 0.00</div>
+        </div>
+      </div>
+
+      <div class="money-layout">
+        <!-- Transactions Column -->
+        <div>
+          <!-- Add Transaction -->
+          <div class="card">
+            <h3 style="margin-bottom: 14px; font-size: 16px;"><i class="fa-solid fa-plus-circle"></i> Add Transaction</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Type</label>
+                <select id="tx-type">
+                  <option value="expense">Expense (-)</option>
+                  <option value="income">Income (+)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Amount (Rs.)</label>
+                <input type="number" id="tx-amount" placeholder="0.00">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description / Note</label>
+              <input type="text" id="tx-desc" placeholder="e.g., Grocery, Salary, Internet bill">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="addTransaction()">
+              Record Transaction
+            </button>
+          </div>
+
+          <!-- Transaction History -->
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <h3 style="font-size: 16px;">Recent Transactions</h3>
+              <button class="btn btn-danger btn-xs" onclick="clearAllTransactions()">Clear All</button>
+            </div>
+            <ul class="transaction-list" id="tx-list"></ul>
+          </div>
+        </div>
+
+        <!-- Savings Goals Column -->
+        <div>
+          <div class="card">
+            <h3 style="margin-bottom: 14px; font-size: 16px;"><i class="fa-solid fa-bullseye"></i> Savings Goals</h3>
+            
+            <div class="form-group">
+              <label>Goal Name</label>
+              <input type="text" id="goal-name" placeholder="e.g., New Laptop, Vacation">
+            </div>
+            <div class="form-group">
+              <label>Target Amount (Rs.)</label>
+              <input type="number" id="goal-target" placeholder="100000">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 16px;" onclick="addGoal()">
+              Add Savings Goal
+            </button>
+
+            <div id="goals-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
